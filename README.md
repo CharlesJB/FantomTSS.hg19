@@ -31,6 +31,7 @@ get_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = mean)
 # To merge all the columns for a cell line by calculating the sum for each
 # tss
 get_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = sum)
+```
 
 ## Reproduce the datasets
 
