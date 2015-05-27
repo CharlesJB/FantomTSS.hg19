@@ -1,4 +1,4 @@
-# Prepare the internal datasets
+# Prepare the datasets
 #
 # This function will create and save the datasets in the \code{R/systada.rda}
 # file.
@@ -8,7 +8,7 @@
 #
 # examples
 #  prepare_internal_datasets
-prepare_internal_datasets <- function(force = FALSE) {
+prepare_datasets <- function(force = FALSE) {
   # Add inst/extdata
   if (!dir.exists("inst/extdata/")) {
     dir.create("inst/extdata/", recursive = TRUE)
@@ -17,9 +17,18 @@ prepare_internal_datasets <- function(force = FALSE) {
   exp_description <<- data_fantom_exp_description(force = force)
   devtools::use_data(exp_description, internal = FALSE, overwrite = TRUE)
   metadata <- metadata_fantom_tss(force = force)
-  metadata_1 <<- metadata[1:(ncol(metadata)/2)]
-  metadata_2 <<- metadata[(ncol(metadata)/2+1):(ncol(metadata))]
-  devtools::use_data(metadata_1, metadata_2, internal = FALSE, overwrite = TRUE)
+  get_sub_metadata <- function(i) {
+    start <- (1+(i-1)*(ncol(metadata)/5))
+    end <- (i*(ncol(metadata)/5))
+    metadata[start:end]
+  }
+  metadata_1 <<- get_sub_metadata(1)
+  metadata_2 <<- get_sub_metadata(2)
+  metadata_3 <<- get_sub_metadata(3)
+  metadata_4 <<- get_sub_metadata(4)
+  metadata_5 <<- get_sub_metadata(5)
+  devtools::use_data(metadata_1, metadata_2, metadata_3, metadata_4, metadata_5,
+                    internal = FALSE, overwrite = TRUE)
   tss <<- data_fantom_tss(metadata = metadata)
   devtools::use_data(tss, internal = FALSE, overwrite = TRUE)
 }
