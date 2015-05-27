@@ -1,4 +1,4 @@
-# FantomEnhancers.hg19
+# FantomTSS.hg19
 
 The goal of this package is to easily extract the genomic positions and the normalized expression of Fantom's TSS (in TPM) in hg19.
 
@@ -6,7 +6,7 @@ The goal of this package is to easily extract the genomic positions and the norm
 
 ```
 require(devtools)
-devtools::install_github("CharlesJB/FantomEnhancers.hg19")
+devtools::install_github("CharlesJB/FantomTSS.hg19")
 ```
 
 ## Main functions
