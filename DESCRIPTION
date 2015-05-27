@@ -1,0 +1,16 @@
+Package: FantomTSS.hg19
+Title: Position and normalized expression of Fantom's TSS
+Version: 0.1.1
+Date: 2015-05-14
+Author: Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
+Author@R: c(person("Charles", "Joly Beauparlant",
+    email="charles.joly-beauparlant@crchul.ulaval.ca")
+Maintainer: Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
+Description: This packages provided helper functions to extract the normalized
+    expression of Fantom's TSS (in TPM).
+Imports: GenomicRanges, S4Vectors
+biocViews: ExperimentData, OrganismData, Hoso_sapiens_data
+License: Artistic-2.0
+VignetteBuilder: knitr
+Suggests: knitr
+Depends: R (>= 3.2)

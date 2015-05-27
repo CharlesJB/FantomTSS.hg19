@@ -1,0 +1,110 @@
+# Prepare the internal datasets
+#
+# This function will create and save the datasets in the \code{R/systada.rda}
+# file.
+#
+# param force If TRUE, the inst/extdata file will be created, even if it
+#             exists. Default: \code{FALSE}.
+#
+# examples
+#  prepare_internal_datasets
+prepare_internal_datasets <- function(force = FALSE) {
+  # Add inst/extdata
+  if (!dir.exists("inst/extdata/")) {
+    dir.create("inst/extdata/", recursive = TRUE)
+  }
+
+  sysdata <- "R/sysdata.rda"
+  exp_description <- data_fantom_exp_description(force = force)
+  tss <- data_fantom_tss(force = force)
+  devtools::use_data(exp_description, tss, internal = TRUE,
+    overwrite = TRUE)
+}
+
+# Prepare the TSS dataset
+#
+# This will download the Fantom's TSS file and convert it into \code{GRanges}
+# format. The file is downloaded in the \code{inst/extdata/} directory.
+#
+# Download url:
+#   "http://fantom.gsc.riken.jp/5/datafiles/latest/extra/CAGE_peaks/"
+# Filename:
+# "hg19.cage_peak_phase1and2combined_tpm_ann.osc.txt.gz"
+#
+# param force If TRUE, the inst/extdata file will be created, even if it
+#             exists. Default: \code{FALSE}.
+#
+# return The \code{GRanges} produced.
+#
+# examples
+#   FantomEnhancers.hg19::data_fantom_tss()
+data_fantom_tss <- function(force = FALSE) {
+  # Download TSS
+  filename <- "hg19.cage_peak_phase1and2combined_tpm_ann.osc.txt.gz"
+  url <- "http://fantom.gsc.riken.jp/5/datafiles/latest/extra/CAGE_peaks/"
+  url <- paste0(url, filename)
+  filename <- paste0("inst/extdata/", filename)
+  download_file(url, filename, force = force)
+
+  # Fetch header infos
+  col_desc <- readLines(filename, 5000)
+  col_desc <- col_desc[grepl("ColumnVariables", col_desc)]
+  col_desc <-  gsub("\\[|\\]", ".", col_desc)
+  col_desc <- strsplit(col_desc, "\\.")
+  header <- sapply(col_desc, function(x) {
+		   i <- grepl("CNhs", x)
+		   ifelse(any(i), x[i][1], x[2])})
+  # Read table
+  col_desc <- readLines(filename, 5000)
+  col_desc <- substring(col_desc, 1, 3)
+  nskip <- min(which(col_desc == "chr")) - 1
+  df <- read.table(filename, header = FALSE, stringsAsFactors = FALSE,
+		   skip = nskip, sep = "\t")
+  colnames(df) <- header
+
+  # Convert to GRanges
+  gr <- data.frame(do.call("rbind", strsplit(df[,1], ":|\\.\\.|\\,")))
+  colnames(gr) <- c("seqnames", "start", "end", "strand")
+  gr[["start"]] <- as.numeric(gr[["start"]])
+  gr[["end"]] <- as.numeric(gr[["end"]])
+  tmp <- gr[["start"]]
+  i <- gr[["start"]] > gr[["end"]]
+  gr[["start"]][i] <- gr[["end"]][i]
+  gr[["end"]][i] <- tmp[i]
+  seqinfo <- GenomeInfoDb::Seqinfo(genome = "hg19")
+  gr <- GenomicRanges::makeGRangesFromDataFrame(gr, seqinfo = seqinfo)
+  GenomicRanges::mcols(gr) <- df
+  gr
+}
+
+# Prepare the exp_description dataset
+#
+# This will download the Fantom's experiment description file and import it as
+# a data.frame. The file will be downloaded in the \code{inst/extdata/}
+# directory.
+#
+# Download url:
+#  "http://fantom.gsc.riken.jp/5/datafiles/latest/basic/human.cell_line.hCAGE/"
+# Filename:
+#  "inst/extdata/00_human.cell_line.hCAGE.hg19.assay_sdrf.txt"
+#
+# param force If TRUE, the inst/extdata file will be created, even if it
+#             exists. Default: \code{FALSE}.
+#
+# return The \code{data.frame} produced.
+#
+# examples
+# FantomEnhancers.hg19::data_fantom_enhancers()
+data_fantom_exp_description <- function(force = FALSE) {
+  # Download TSS
+  filename <- "00_human.cell_line.hCAGE.hg19.assay_sdrf.txt"
+  url <-
+    "http://fantom.gsc.riken.jp/5/datafiles/latest/basic/human.cell_line.hCAGE/"
+  url <- paste0(url, filename)
+  filename <- paste0("inst/extdata/", filename)
+  download_file(url, filename, force = force)
+
+  # Prepare the data.frame
+  read.table(filename, header = TRUE, sep = "\t", quote = "",
+             stringsAsFactors = FALSE)
+}
