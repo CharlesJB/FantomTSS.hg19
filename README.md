@@ -31,3 +31,17 @@ get_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = mean)
 # To merge all the columns for a cell line by calculating the sum for each
 # tss
 get_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = sum)
+
+## Reproduce the datasets
+
+If you wish to reproduce the datasets, you can use the `prepare_datasets` function. From a R session in the packages main directory:
+
+```
+library(devtools)
+library(data.table)
+load_all()
+source("data-raw/data.R")
+prepare_datasets()
+```
+
+Note that this will download large files (~800 MB) from Fantom's web page. You will also need to reinstall the package if you want to use those new datasets.

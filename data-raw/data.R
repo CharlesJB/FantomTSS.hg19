@@ -14,14 +14,17 @@ prepare_internal_datasets <- function(force = FALSE) {
     dir.create("inst/extdata/", recursive = TRUE)
   }
 
-  sysdata <- "R/sysdata.rda"
-  exp_description <- data_fantom_exp_description(force = force)
-  tss <- data_fantom_tss(force = force)
-  devtools::use_data(exp_description, tss, internal = TRUE,
-    overwrite = TRUE)
+  exp_description <<- data_fantom_exp_description(force = force)
+  devtools::use_data(exp_description, internal = FALSE, overwrite = TRUE)
+  metadata <- metadata_fantom_tss(force = force)
+  metadata_1 <<- metadata[1:(ncol(metadata)/2)]
+  metadata_2 <<- metadata[(ncol(metadata)/2+1):(ncol(metadata))]
+  devtools::use_data(metadata_1, metadata_2, internal = FALSE, overwrite = TRUE)
+  tss <<- data_fantom_tss(metadata = metadata)
+  devtools::use_data(tss, internal = FALSE, overwrite = TRUE)
 }
 
-# Prepare the TSS dataset
+# Prepare the TSS metadata dataset
 #
 # This will download the Fantom's TSS file and convert it into \code{GRanges}
 # format. The file is downloaded in the \code{inst/extdata/} directory.
@@ -34,11 +37,13 @@ prepare_internal_datasets <- function(force = FALSE) {
 # param force If TRUE, the inst/extdata file will be created, even if it
 #             exists. Default: \code{FALSE}.
 #
-# return The \code{GRanges} produced.
+# return A \code{DataFrame} object with all the metadata
 #
 # examples
-#   FantomEnhancers.hg19::data_fantom_tss()
-data_fantom_tss <- function(force = FALSE) {
+#   \dontrun{
+#     FantomEnhancers.hg19::metadata_fantom_tss()
+#   }
+metadata_fantom_tss <- function(force = FALSE) {
   # Download TSS
   filename <- "hg19.cage_peak_phase1and2combined_tpm_ann.osc.txt.gz"
   url <- "http://fantom.gsc.riken.jp/5/datafiles/latest/extra/CAGE_peaks/"
@@ -58,13 +63,38 @@ data_fantom_tss <- function(force = FALSE) {
   col_desc <- readLines(filename, 5000)
   col_desc <- substring(col_desc, 1, 3)
   nskip <- min(which(col_desc == "chr")) - 1
-  df <- read.table(filename, header = FALSE, stringsAsFactors = FALSE,
-		   skip = nskip, sep = "\t")
-  colnames(df) <- header
+  filename <- paste("zcat", filename)
+  df <- fread(filename, sep = "\t", header = FALSE, skip = nskip)
+  setnames(df, header)
+  df <- S4Vectors::DataFrame(df)
+  i <- grepl("CNhs", colnames(df))
+  for (name in colnames(df)[i]) {
+    df[[name]] <- S4Vectors::Rle(df[[name]])
+  }
+  df
+}
+
+# Prepare the TSS dataset
+#
+# param force If TRUE, the inst/extdata file will be created, even if it
+#             exists. Default: \code{FALSE}.
+# param metadata Metadatas produced with \code{metadata_fantom_tss}. If
+#                \code{NULL}, will use call the function to generate it.
+#
+# return The \code{GRanges} produced.
+#
+# examples
+#   \dontrun{
+#     FantomEnhancers.hg19::data_fantom_tss()
+#   }
+data_fantom_tss <- function(metadata = NULL, force = FALSE) {
+  if (is.null(metadata)) {
+    metadata <- metadata_fantom_tss(force = force)
+  }
 
   # Convert to GRanges
-  gr <- data.frame(do.call("rbind", strsplit(df[,1], ":|\\.\\.|\\,")))
-  colnames(gr) <- c("seqnames", "start", "end", "strand")
+  gr <- data.frame(do.call("rbind", strsplit(metadata[,1], ":|\\.\\.|\\,")))
+  setnames(gr, c("seqnames", "start", "end", "strand"))
   gr[["start"]] <- as.numeric(gr[["start"]])
   gr[["end"]] <- as.numeric(gr[["end"]])
   tmp <- gr[["start"]]
@@ -72,9 +102,7 @@ data_fantom_tss <- function(force = FALSE) {
   gr[["start"]][i] <- gr[["end"]][i]
   gr[["end"]][i] <- tmp[i]
   seqinfo <- GenomeInfoDb::Seqinfo(genome = "hg19")
-  gr <- GenomicRanges::makeGRangesFromDataFrame(gr, seqinfo = seqinfo)
-  GenomicRanges::mcols(gr) <- df
-  gr
+  GenomicRanges::makeGRangesFromDataFrame(gr, seqinfo = seqinfo)
 }
 
 # Prepare the exp_description dataset

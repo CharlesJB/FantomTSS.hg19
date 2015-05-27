@@ -58,9 +58,7 @@ get_fantom_library_name <- function(cell_line) {
 #' @import GenomicRanges
 #' @export
 get_tss <- function() {
-  to_return <- tss
-  S4Vectors::mcols(to_return) <- NULL
-  to_return
+  tss
 }
 
 #' Get a GRanges object with the TPM values for specific cell types
@@ -113,6 +111,7 @@ get_tss <- function() {
 #'
 #' @export
 get_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
+  GenomicRanges::mcols(tss) <- cbind(metadata_1, metadata_2)
   if (is.null(cell_lines)) {
     tss
   } else {
