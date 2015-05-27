@@ -104,8 +104,8 @@ data_fantom_tss <- function(metadata = NULL, force = FALSE) {
   # Convert to GRanges
   gr <- data.frame(do.call("rbind", strsplit(metadata[,1], ":|\\.\\.|\\,")))
   setnames(gr, c("seqnames", "start", "end", "strand"))
-  gr[["start"]] <- as.numeric(gr[["start"]])
-  gr[["end"]] <- as.numeric(gr[["end"]])
+  gr[["start"]] <- as.numeric(as.character(gr[["start"]]))
+  gr[["end"]] <- as.numeric(as.character(gr[["end"]]))
   tmp <- gr[["start"]]
   i <- gr[["start"]] > gr[["end"]]
   gr[["start"]][i] <- gr[["end"]][i]
