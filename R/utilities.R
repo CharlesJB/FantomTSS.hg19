@@ -47,13 +47,13 @@ get_fantom_library_name <- function(cell_line) {
 #' Produce a GRanges object containing all the tss from Fantom but
 #' without the expression values for every experiments.
 #'
-#' @seealso  \code{\link{get_tss_tpm}}
+#' @seealso  \code{\link{get_fantom_tss_tpm}}
 #'
 #' @return A \code{GRanges} object representing every tss from Fantom in
 #'   hg19.
 #'
 #' @examples
-#'   get_tss()
+#'   get_fantom_tss()
 #'
 #' @import GenomicRanges
 #' @export
@@ -66,7 +66,7 @@ get_fantom_tss <- function() {
 #' Returns a GRanges with metadata columns corresponding to the requested
 #' cell type enhancer expression (in TPM).
 #'
-#' @seealso \code{\link{get_tss}}
+#' @seealso \code{\link{get_fantom_tss}}
 #' @seealso \code{\link{get_fantom_library_name}}
 #'
 #' @param cell_lines The cell line(s) to fetch. Must be a vector of character.
@@ -100,14 +100,14 @@ get_fantom_tss <- function() {
 #'
 #' @examples
 #'   # To get the TPM in A549 cell lines
-#'   get_tss_tpm(cell_lines = "A549")
+#'   get_fantom_tss_tpm(cell_lines = "A549")
 #'
 #'   # To get the TPM in A549 and in K562 cell lines
-#'   get_tss_tpm(cell_lines = c("A549", "K562"))
+#'   get_fantom_tss_tpm(cell_lines = c("A549", "K562"))
 #'
 #'   # To get the TPM K562 cell lines and merge metadata columns by returning
 #'   # their mean value
-#'   get_tss_tpm(cell_lines = "K562", merge.FUN = mean)
+#'   get_fantom_tss_tpm(cell_lines = "K562", merge.FUN = mean)
 #'
 #' @export
 get_fantom_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
@@ -132,14 +132,14 @@ get_fantom_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
 			 function(x) apply(as.data.frame(x), 1, merge.FUN))
       names
     } else {
-      get_names <- function(basename) {
+      get_fantom_names <- function(basename) {
         id <- ids[[basename]]
         names <- rep(basename, length(id))
         paste(names, 1:length(names), sep = "_")
       }
       metadata <- lapply(metadata, as.data.frame)
       metadata <- do.call("cbind", metadata)
-      colnames(metadata) <- unlist(lapply(cell_lines, get_names))
+      colnames(metadata) <- unlist(lapply(cell_lines, get_fantom_names))
     }
 
     # Add the metadata to the gr to return
@@ -160,7 +160,7 @@ get_fantom_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
 #' "sample_name". One row per Fantom experiment.
 #'
 #' @examples
-#'   head(get_experiment_infos())
+#'   head(get_fantom_experiment_infos())
 #'
 #' @export
 get_fantom_experiment_infos <- function() {
