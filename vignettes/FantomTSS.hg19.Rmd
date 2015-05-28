@@ -23,36 +23,36 @@ library("FantomTSS.hg19")
 
 ## Main functions
 
-### `get_tss`
+### `get_fantom_tss`
 
-The `get_tss` functions returns a `GRanges` object with all the tss and no metadata columns:
+The `get_fantom_tss` functions returns a `GRanges` object with all the tss and no metadata columns:
 
 ```
-get_tss()
+get_fantom_tss()
 ```
 
-### `get_tss_tpm`
+### `get_fantom_tss_tpm`
 
-The `get_tss_tpm` returns a `GRanges` object with all the tss and selected metadata columns:
+The `get_fantom_tss_tpm` returns a `GRanges` object with all the tss and selected metadata columns:
 
 To get the expression of tss in A549:
 ```{r getA546}
-get_tss_tpm(cell_lines = "A549")
+get_fantom_tss_tpm(cell_lines = "A549")
 ```
 
 To get the expression of tss in A549 and K562:
 ```{r getA546K562}
-get_tss_tpm(cell_lines = c("A549", "K562"))
+get_fantom_tss_tpm(cell_lines = c("A549", "K562"))
 ```
 
 To merge all the columns for a cell line by calculating the mean value for each tss:
 ```{r funMean}
-get_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = mean)
+get_fantom_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = mean)
 ```
 
 To merge all the columns for a cell line by calculating the sum for each tss:
 ```{r funSum}
-get_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = sum)
+get_fantom_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = sum)
 ```
 
 It's also possible to create our own function, as long as it take a `vector` of `numeric` as input and outputs a single `numeric` value:
@@ -61,5 +61,5 @@ It's also possible to create our own function, as long as it take a `vector` of 
 dummy_function <- function(x) {
   x[1]
 }
-get_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = dummy_function)
+get_fantom_tss_tpm(cell_lines = c("A549", "K562"), merge.FUN = dummy_function)
 ```

@@ -57,7 +57,7 @@ get_fantom_library_name <- function(cell_line) {
 #'
 #' @import GenomicRanges
 #' @export
-get_tss <- function() {
+get_fantom_tss <- function() {
   tss
 }
 
@@ -110,7 +110,7 @@ get_tss <- function() {
 #'   get_tss_tpm(cell_lines = "K562", merge.FUN = mean)
 #'
 #' @export
-get_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
+get_fantom_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
   GenomicRanges::mcols(tss) <- cbind(metadata_1, metadata_2, metadata_3,
                                      metadata_4, metadata_5)
   if (is.null(cell_lines)) {
@@ -163,7 +163,7 @@ get_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
 #'   head(get_experiment_infos())
 #'
 #' @export
-get_experiment_infos <- function() {
+get_fantom_experiment_infos <- function() {
   to_return <- exp_description[,c("Library.Name", "Comment..sample_name.")]
   colnames(to_return) <- c("library_name", "sample_name")
   to_return
