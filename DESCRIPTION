@@ -1,6 +1,6 @@
 Package: FantomTSS.hg19
 Title: Position and normalized expression of Fantom's TSS
-Version: 0.1.2
+Version: 0.1.3
 Date: 2015-05-14
 Author: Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
 Author@R: c(person("Charles", "Joly Beauparlant",
