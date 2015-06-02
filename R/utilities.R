@@ -111,7 +111,7 @@ get_fantom_tss <- function() {
 #'
 #' @export
 get_fantom_tss_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
-  GenomicRanges::mcols(FantomTSS.hg19::tss) <- cbind(metadata_1, metadata_2,
+  GenomicRanges::mcols(tss) <- cbind(metadata_1, metadata_2,
                                      metadata_3, metadata_4, metadata_5)
   if (is.null(cell_lines)) {
     tss
