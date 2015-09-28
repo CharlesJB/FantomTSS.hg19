@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.31507.svg)](http://dx.doi.org/10.5281/zenodo.31507)
+
 # FantomTSS.hg19
 
 The goal of this package is to easily extract the genomic positions and the normalized expression of Fantom's TSS (in TPM) in hg19.
